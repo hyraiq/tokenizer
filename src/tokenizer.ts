@@ -9,7 +9,7 @@ export class Tokenizer {
   }
 
   public handle(semanticTokens: Record<string, string>) {
-    return Object.entries(semanticTokens).reduce((previous, current)  => {
+    return Object.entries(semanticTokens).reduce((previous, current: [string, string])  => {
       const resolvedValue = Tokenizer.resolve(current[1], this.globalTokens);
       return {
         ...previous,
