@@ -1,6 +1,6 @@
 # Tailwind-friendly token resolver for semantic tokens
 
-Given a set of global tokens"
+Given a set of global tokens, this package provides a function that resolves "semantic token" to their values - see below example.
 
 ```javascript
 // colors.js
