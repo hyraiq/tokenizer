@@ -1,7 +1,5 @@
 name: Publish
 
-# Manually triggered from the Actions tab. Publishes the current package.json
-# version to GitHub Packages; npm rejects the run if that version already exists.
 on:
   workflow_dispatch:
 
@@ -20,8 +18,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      # prepublishOnly rebuilds dist/ before packing. The committed .npmrc points
-      # the @hyraiq scope at GitHub Packages and reads NPM_AUTH_TOKEN for auth.
+      # .npmrc reads NPM_AUTH_TOKEN; prepublishOnly rebuilds dist/.
       - run: npm publish
         env:
           NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
