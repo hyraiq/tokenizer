@@ -1,16 +1,21 @@
 {
   "name": "@hyraiq/tokenizer",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Color tokenizer for Tailwind",
-  "source": "src/index.ts",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
-  "types": "dist/types.d.ts",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
-    "watch": "parcel watch",
-    "build": "parcel build",
-    "test": "jest",
-    "clean": "rimraf dist"
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "vitest run",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "author": "",
   "license": "ISC",
@@ -19,17 +24,11 @@
     "url": "git+https://github.com/hyraiq/tokenizer.git"
   },
   "devDependencies": {
-    "@parcel/packager-ts": "^2.16.0",
-    "@parcel/transformer-typescript-types": "^2.16.0",
-    "parcel": "^2.16.0",
-    "rimraf": "^6.0.1",
-    "@types/jest": "^29.5.3",
-    "jest": "^29.6.1",
-    "ts-jest": "^29.4.5",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
   },
   "files": [
     "dist/",
-    "README.md"
+    "readme.md"
   ]
 }

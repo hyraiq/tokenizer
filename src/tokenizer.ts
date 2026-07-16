@@ -8,18 +8,17 @@ export class Tokenizer {
   constructor(private readonly globalTokens: GlobalTokens) {
   }
 
-  public handle(semanticTokens: Record<string, string>) {
-    return Object.entries(semanticTokens).reduce((previous, current: [string, string])  => {
-      const resolvedValue = Tokenizer.resolve(current[1], this.globalTokens);
-      return {
-        ...previous,
-        [current[0]]: resolvedValue
-      };
-    }, {} as Record<string, string>);
+  public handle(semanticTokens: Record<string, string>): Record<string, string> {
+    return Object.fromEntries(
+      Object.entries(semanticTokens).map(([key, value]) => [
+        key,
+        Tokenizer.resolve(value, this.globalTokens),
+      ]),
+    );
   }
 
   private static resolve(input: string, globalTokens: GlobalTokens) : string {
-    if (globalTokens.hasOwnProperty(input)) {
+    if (Object.hasOwn(globalTokens, input)) {
       const exactMatch = globalTokens[input];
       if (typeof exactMatch === 'object') {
         throw new Error(`Resolved '${input}', however it is an object. Should you be using one of the values from this object?`);
@@ -28,7 +27,7 @@ export class Tokenizer {
       return exactMatch;
     }
 
-    const splitByHyphen = input.match(/(^[^\-]+)(?:\-)(.*)$/);
+    const splitByHyphen = input.match(/^([^-]+)-(.*)$/);
     if (splitByHyphen === null) {
       throw new Error(`Tried to resolve '${input}', but it is neither a token itself, nor a nested reference`);
     }
@@ -36,7 +35,7 @@ export class Tokenizer {
     const subkey = splitByHyphen[1];
     const rest = splitByHyphen[2];
 
-    if (!globalTokens.hasOwnProperty(subkey)) {
+    if (!Object.hasOwn(globalTokens, subkey)) {
       throw new Error(`Tried to resolve '${input}', but '${subkey}' is not a token`);
     }
 

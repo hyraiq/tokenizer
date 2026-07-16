@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { globalTokens } from './__fixtures/global';
 import { Tokenizer } from './tokenizer';
 
@@ -35,27 +36,43 @@ describe('tokenizer', () => {
     });
   });
 
+  it('returns an empty object for an empty semantic set', () => {
+    expect(Tokenizer.with(globalTokens).handle({})).toEqual({});
+  });
+
+  it('resolves flat top-level tokens without a nested reference', () => {
+    expect(Tokenizer.with(globalTokens).handle({
+      'page': 'white',
+      'ink': 'black',
+      'ghost': 'transparent',
+    })).toEqual({
+      'page': '#FFFFFF',
+      'ink': '#000',
+      'ghost': 'transparent',
+    });
+  });
+
   it('throws if reference attempts to use an object color without specifying a property', () => {
     expect(() => Tokenizer.with(globalTokens).handle({
       'foo': 'blue'
-    })).toThrowError(/^Resolved 'blue', however it is an object/);
+    })).toThrow(/^Resolved 'blue', however it is an object/);
   });
 
   it('throws if reference attempts to access a property on a string', () => {
     expect(() => Tokenizer.with(globalTokens).handle({
       'foo': 'white-200'
-    })).toThrowError(/^Tried to resolve 'white-200', but 'white' is a single value instead of an object/);
+    })).toThrow(/^Tried to resolve 'white-200', but 'white' is a single value instead of an object/);
   });
 
   it('throws if cannot find unknown top string token', () => {
     expect(() => Tokenizer.with(globalTokens).handle({
       'foo': 'blarg'
-    })).toThrowError(/^Tried to resolve 'blarg', but it is neither a token itself, nor a nested reference/);
+    })).toThrow(/^Tried to resolve 'blarg', but it is neither a token itself, nor a nested reference/);
   });
 
   it('throws if cannot find unknown top nested object', () => {
     expect(() => Tokenizer.with(globalTokens).handle({
       'foo': 'blarg-104'
-    })).toThrowError(/^Tried to resolve 'blarg-104', but 'blarg' is not a token/);
+    })).toThrow(/^Tried to resolve 'blarg-104', but 'blarg' is not a token/);
   });
 });
