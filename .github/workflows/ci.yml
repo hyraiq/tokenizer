@@ -20,3 +20,6 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # Catch ESM packaging regressions (extensionless imports, missing exports
+      # conditions) that bundler-based tests don't surface.
+      - run: npm run test:dist

@@ -1,19 +1,21 @@
 {
   "name": "@hyraiq/tokenizer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Color tokenizer for Tailwind",
   "type": "module",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "vitest run",
+    "test:dist": "node scripts/smoke.cjs",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build"
   },

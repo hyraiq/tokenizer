@@ -1,1 +1,1 @@
-export { Tokenizer } from './tokenizer';
+export { Tokenizer } from './tokenizer.js';

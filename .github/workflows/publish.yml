@@ -4,21 +4,41 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  packages: write
+  contents: write # push the release tag
+  packages: write # publish to GitHub Packages
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Gated by the `publish` environment - configure required reviewers in
+    # Settings > Environments so a run must be approved before it publishes.
+    environment: publish
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0 # need existing tags to avoid re-tagging
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: npm run build
+      - run: npm run test:dist
       # .npmrc reads NPM_AUTH_TOKEN; prepublishOnly rebuilds dist/.
       - run: npm publish
         env:
           NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag release
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          TAG="v${VERSION}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists; skipping tag push."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
