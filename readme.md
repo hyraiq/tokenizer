@@ -5,7 +5,7 @@ Given a set of global tokens, this package provides a function that resolves "se
 ```javascript
 // colors.js
 
-const { tokenizer } = require('@hyraiq/tokenizer');
+import { Tokenizer } from '@hyraiq/tokenizer';
 
 const globalTokens = {
   white: '#FFFFFF',
@@ -40,36 +40,34 @@ const globalTokens = {
 
 const tokenizer = Tokenizer.with(globalTokens);
 
-module.exports = {
-  globalTokens,
-  background: tokenizer.resolve({
-    'default': 'white',
-    'secondary': 'grey-25',
-    'hover': 'grey-50',
-    'active': 'grey-100',
-    'selected': 'grey-75',
-    'brand': 'blue-600',
-  })
-}
+export const background = tokenizer.handle({
+  'default': 'white',
+  'secondary': 'grey-25',
+  'hover': 'grey-50',
+  'active': 'grey-100',
+  'selected': 'grey-75',
+  'brand': 'blue-600',
+});
+
+export { globalTokens };
 ```
 
-This `tokenizer.resolve()` method will resolve these references to `blue-600` etc within the global tokens, which can 
+This `tokenizer.handle()` method will resolve these references to `blue-600` etc within the global tokens, which can 
 then be used in your main tailwind.config.js:
 
 ```javascript
 // tailwind.config.js
-const {colors} = require('./colors');
+import { globalTokens, background } from './colors';
 
-module.exports = {
+export default {
   theme: {
-    colors: colors.globalTokens,
+    colors: globalTokens,
   },
   backgroundColor: theme => ({
     // Include the global tokens
     ...theme('theme.colors'),
     // And the semantic tokens just for background
-    ...colors.background,
+    ...background,
   })
 }
-
 ```
