@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { globalTokens } from './__fixtures/global';
-import { Tokenizer } from './tokenizer';
+import { globalTokens } from './__fixtures/global.js';
+import { Tokenizer } from './tokenizer.js';
 
 describe('tokenizer', () => {
   it('should resolve colors', () => {
