@@ -75,4 +75,74 @@ describe('tokenizer', () => {
       'foo': 'blarg-104'
     })).toThrow(/^Tried to resolve 'blarg-104', but 'blarg' is not a token/);
   });
+
+  describe('alpha', () => {
+    it('resolves a token at an alpha percentage to an 8-digit hex', () => {
+      expect(Tokenizer.with(globalTokens).handle({
+        'disabled': 'grey-900/40',
+        'inverse-disabled': 'white/40',
+      })).toEqual({
+        'disabled': '#1D212B66',
+        'inverse-disabled': '#FFFFFF66',
+      });
+    });
+
+    it('expands three-digit hex before appending the alpha channel', () => {
+      expect(Tokenizer.with(globalTokens).handle({ 'faded-ink': 'black/40' }))
+        .toEqual({ 'faded-ink': '#00000066' });
+    });
+
+    it('supports the full 0-100 range', () => {
+      expect(Tokenizer.with(globalTokens).handle({
+        'none': 'grey-900/0',
+        'some': 'grey-900/7',
+        'all': 'grey-900/100',
+      })).toEqual({
+        'none': '#1D212B00',
+        'some': '#1D212B12',
+        'all': '#1D212BFF',
+      });
+    });
+
+    it('leaves tokens without an alpha suffix untouched', () => {
+      expect(Tokenizer.with(globalTokens).handle({ 'primary': 'grey-900' }))
+        .toEqual({ 'primary': '#1D212B' });
+    });
+
+    it('throws if alpha is applied to a non-hex value', () => {
+      expect(() => Tokenizer.with(globalTokens).handle({
+        'foo': 'transparent/40'
+      })).toThrow(/^Tried to apply alpha to 'transparent\/40', but 'transparent' is not a hex colour/);
+    });
+
+    it('throws if alpha is above 100', () => {
+      expect(() => Tokenizer.with(globalTokens).handle({
+        'foo': 'grey-900/140'
+      })).toThrow(/^Tried to resolve 'grey-900\/140', but alpha '140' is not a percentage between 0 and 100/);
+    });
+
+    it('throws if the alpha suffix is malformed', () => {
+      expect(() => Tokenizer.with(globalTokens).handle({
+        'foo': 'grey-900/'
+      })).toThrow(/^Tried to resolve 'grey-900\/', but '\/' must be followed by a percentage/);
+    });
+
+    it('throws if the alpha suffix is not a number', () => {
+      expect(() => Tokenizer.with(globalTokens).handle({
+        'foo': 'grey-900/half'
+      })).toThrow(/^Tried to resolve 'grey-900\/half', but '\/' must be followed by a percentage/);
+    });
+
+    it('throws if more than one alpha suffix is given', () => {
+      expect(() => Tokenizer.with(globalTokens).handle({
+        'foo': 'grey-900/40/40'
+      })).toThrow(/^Tried to resolve 'grey-900\/40\/40', but '\/' must be followed by a percentage/);
+    });
+
+    it('still reports an unknown token when an alpha suffix is present', () => {
+      expect(() => Tokenizer.with(globalTokens).handle({
+        'foo': 'blarg-104/40'
+      })).toThrow(/^Tried to resolve 'blarg-104', but 'blarg' is not a token/);
+    });
+  });
 });
