@@ -1,6 +1,6 @@
 {
   "name": "@hyraiq/tokenizer",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Color tokenizer for Tailwind",
   "type": "module",
   "types": "dist/index.d.ts",

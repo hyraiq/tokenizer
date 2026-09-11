@@ -18,7 +18,10 @@ assert.strictEqual(
 );
 
 // Sanity-check it actually works end to end.
-const resolved = Tokenizer.with({ blue: { 600: '#002FFF' } }).handle({ brand: 'blue-600' });
-assert.deepStrictEqual(resolved, { brand: '#002FFF' });
+const resolved = Tokenizer.with({ blue: { 600: '#002FFF' } }).handle({
+  brand: 'blue-600',
+  'brand-faded': 'blue-600/40',
+});
+assert.deepStrictEqual(resolved, { brand: '#002FFF', 'brand-faded': '#002FFF66' });
 
 console.log('smoke: built dist/ is require()-able and resolves tokens ✓');

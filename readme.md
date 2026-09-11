@@ -71,3 +71,21 @@ export default {
   })
 }
 ```
+
+## Alpha
+
+Suffix a reference with `/<percent>` to resolve it at partial opacity. The percentage is 0-100 and the result is an
+8-digit hex:
+
+```javascript
+tokenizer.handle({
+  'disabled': 'grey-900/40',          // -> '#1D212B66'
+  'inverse-disabled': 'white/40',     // -> '#FFFFFF66'
+});
+```
+
+Tailwind reads 8-digit hex natively, and its own opacity modifier still wins where both are present - `text-disabled/60`
+renders `rgb(29 33 43 / 0.6)`. Note that a colour carrying its own alpha opts out of Tailwind's `--tw-text-opacity`
+variable, so a `text-opacity-*` utility alongside it has no effect rather than compounding.
+
+Alpha only applies to hex colours. `transparent/40` or `currentColor/40` throws, as does a percentage above 100.
